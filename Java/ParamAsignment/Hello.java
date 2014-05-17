@@ -26,8 +26,9 @@ class Hello {
         System.out.println("c =" + c);
 
         System.out.println("obj.a =" + obj.a + "  obj.b = " + obj.b);
-        getObj(obj);
+        Obj obj2 = getObj(obj);
         System.out.println("obj.a =" + obj.a + "  obj.b = " + obj.b);
+        System.out.println("obj2.a =" + obj2.a + "  obj2.b = " + obj2.b);
     }
 
     public static void getValue(int param) {
@@ -50,10 +51,11 @@ class Hello {
         return;
     }
 
-    public static void getObj(Obj param) {
+    public static Obj getObj(Obj param) {
+        param = new Obj();
         param.a = 10;
         param.b = "10";
-        return;
+        return param;
     }
 
     private static class Obj {
