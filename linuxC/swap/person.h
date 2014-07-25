@@ -3,13 +3,9 @@
 typedef struct {
     char* name;
     char* gender;
-    int age;
     char* birthday;
     char* passwd;
-    int a;
-    int b;
-    int c;
-    int d;
+    int age;
 } person;
 
 void printPerson(person* p);
