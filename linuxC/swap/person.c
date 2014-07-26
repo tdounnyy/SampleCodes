@@ -1,7 +1,7 @@
 #include "person.h"
 
 void* initPerson(person* p, char* n, char* g, int a, char* birth) {
-    print("initPerson");
+    printf("initPerson ");
     p->name = n;
     p->gender = g;
     p->age = a;
