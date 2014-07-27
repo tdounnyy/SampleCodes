@@ -1,24 +1,31 @@
 #include "stack.h"
-#include <stdlib.h>
-#include <string.h>
 
-void stackInit(stack* ps, int initLen, int elemSize) {
+void stackGrow(stack* ps) {
+    int newSize = ps->allocLen*2;
+    ps->target = realloc(ps->target, ps->elemSize * newSize);
+    ps->allocLen = newSize;
+    printf("stackGrow %d to %d\n", ps->logicLen, ps->allocLen);
+}
+
+//void stackInit(stack* ps, int initLen, int elemSize) {
+void stackInit(stack* ps, int initLen, int elemSize, void (*printfun)(void *), void (*freefun)(void *)) {
     ps->allocLen = initLen;
     ps->logicLen = 0;
     ps->elemSize = elemSize;
     ps->target = malloc(initLen * elemSize);
-    // TODO assert(ps-target != NULL);
+    assert(ps->target != NULL);
+    ps->printfun = printfun;
+    ps->freefun = freefun;
     
     printf("stackInit: allocLen = %d, logicLen = %d, elemSize = %d\n",
         ps->allocLen, ps->logicLen, ps->elemSize);
 }
 
 void stackPush(stack* ps, void* elem) {
-    // TODO
-    //if (ps->logicLen == ps->allocLen)
-    //    stackGrow();
+    if (ps->logicLen == ps->allocLen)
+        stackGrow(ps);
     printf("stackPush ");
-    printPerson(elem);
+    ps->printfun(elem);
     void* p = (char *)ps->target + ps->logicLen * ps->elemSize;
     memcpy(p, elem, ps->elemSize);
     ps->logicLen++;
@@ -29,13 +36,24 @@ void stackPop(stack* ps, void* elemAddr) {
         elemAddr = NULL;
         return;
     }
-    void *p = (char *)ps->target + (ps->logicLen - 1) * ps->elemSize;
-    memcpy(elemAddr, p, ps->elemSize);
     ps->logicLen --;
+    void *p = (char *)ps->target + ps->logicLen * ps->elemSize;
+    memcpy(elemAddr, p, ps->elemSize);
     printf("stackPop ");
-    printPerson(p);
+    ps->printfun(p);
     return ;
 }
 
-//TODO
-void stackDispose(stack* ps){}
+void stackDispose(stack* ps) {
+    // TODO free every stack elem
+    int n;
+    void* elem = NULL;
+    for (n = ps->logicLen -1; n>=0; n--) {
+        elem = (char *)ps->target + ps->elemSize * n;
+        ps->freefun(elem);
+        ps->logicLen--;
+    }
+    // then, free the stack
+    free(ps->target);
+    free(ps);
+}
